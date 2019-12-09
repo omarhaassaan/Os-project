@@ -20,7 +20,7 @@ class T extends Thread
     public void run()
     {
         
-        if(this.getName().equals("FRIST ONE"))
+        if(this.getName().equals("FRIST ONE")|| this.getName().equals("THIRD ONE"))
         {
             
             System.out.println("The Following Thread is waiting for the permit = "+t1);
@@ -46,7 +46,7 @@ class T extends Thread
         }
         else
         {
-              if(this.getName().equals("SECOND ONE"))
+              if(this.getName().equals("SECOND ONE") || this.getName().equals("FORTH ONE"))
         {
             
             System.out.println("The Following Thread is waiting for the permit = "+t1);
@@ -80,16 +80,24 @@ public class OS_PROJECT1_Semaphore {
          Semaphore s1 = new Semaphore(1);
         T Frist = new T(s1,"FRIST ONE");
         T Second = new T(s1,"SECOND ONE");
+        T Third = new T (s1,"THIRD ONE");
+        T Forth = new T (s1,"FORTH ONE");
         
         Frist.start();
 
         Second.start();
 
+        Third.start();
+        Forth.start();
+        
         Frist.join();
         
         Second.join();
-                
-         
+        
+        Third.join();
+        
+        Forth.join();
+        
         System.out.println("" + Count.co);
         
     }
