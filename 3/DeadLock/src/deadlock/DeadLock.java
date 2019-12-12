@@ -58,8 +58,8 @@ class Thread2 extends Thread {
 
     Resource resources[] = new Resource[2];
 
-    Thread2(Resource[] r) {
-        this.resources = r;
+    Thread2(Resource[] resources) {
+        this.resources = resources;
     }
 
     @Override
@@ -71,7 +71,7 @@ class Thread2 extends Thread {
         } catch (Exception e) {
             System.out.println(e);
         }
-        System.out.println(resources[1].isLocked());
+        System.out.println(resources[0].isLocked());
         resources[1].lock(2);
         resources[0].unlock();
         System.out.println("T2 " + resources[1]);
@@ -143,7 +143,7 @@ public class DeadLock {
          */
         for (int i = 0; i < 2; i++) {
             if (resources[i].getThreadNumber() != -1) {
-                need[i][resources[i].getThreadNumber() - 1] = 0;
+                need[resources[i].getThreadNumber() - 1][i] = 0;
             }
         }
         //  prnt1d(available);
