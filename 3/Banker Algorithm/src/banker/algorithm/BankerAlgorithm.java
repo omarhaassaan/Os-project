@@ -7,11 +7,11 @@ package banker.algorithm;
 
 import java.util.Scanner;
 
-class Start {
+class Start1 {
 
     public final int nor = 3;
     private int[] resources;
-    private int numberOfProcesses;
+    public int numberOfProcesses;
     private int[] available;
     private int[] numberOfInstances;
     private int[][] need;
@@ -19,7 +19,7 @@ class Start {
     private int[][] max;
     Scanner sc = new Scanner(System.in);
 
-    Start() {
+    Start1() {
         this.numberOfInstances = new int[nor];
         System.out.println("Enter number of processes");
         this.numberOfProcesses = sc.nextInt();
@@ -46,7 +46,7 @@ class Start {
         //find need matrix
         this.getAvailable();
         this.getNeed();
-        
+
         while (flag == 1) {
             flag = 0;
             for (i = 0; i < this.numberOfProcesses; i++) {
@@ -108,6 +108,14 @@ class Start {
         }
     }
 
+    public int[][] getAllocation() {
+        return allocation;
+    }
+
+    public int[][] getMax() {
+        return max;
+    }
+
     public int[] getAvailable() {
         this.available = new int[nor];
         int sum = 0;
@@ -137,6 +145,73 @@ class Start {
     }
 }
 
+class Banker1 {
+
+    private int[] work;
+    private boolean[] finish;
+    private Start1 s;
+    private int[] available;
+    private int[][] allocation;
+    private int safeSequence[];
+
+    Banker1() {
+        s = new Start1();
+        s.initializeAllocation();
+        s.initializeMax();
+        allocation = s.getAllocation();
+        safeSequence = new int[s.numberOfProcesses];
+        available = s.getAvailable();
+        work = new int[s.nor];
+        finish = new boolean[s.numberOfProcesses];
+        for (int i = 0; i < s.nor; i++) {
+            work[i] = available[i];
+        }
+        for (int i = 0; i < s.numberOfProcesses; i++) {
+            finish[i] = false;
+        }
+    }
+
+    public boolean isSafe() {
+        int count = 0;
+        //visited array to find the already allocated process 
+        while (count < s.numberOfProcesses) {
+            boolean flag = false;
+            for (int i = 0; i < s.numberOfProcesses; i++) {
+                if (finish[i] == false) {
+                    for (int j = 0; j < s.nor; j++) {
+                        if (s.getNeed()[i][j] > work[j]) {
+                            break;
+                        }
+                        if (j == s.nor) {
+                            safeSequence[count++] = i;
+                            finish[i] = true;
+                            flag = true;
+                            for (int k = 0; k < s.nor; k++) {
+                                work[k] += allocation[i][k];
+                            }
+                        }
+                    }
+                }
+            }
+            if (flag == false) {
+                break;
+            }
+        }
+        if (count < s.numberOfProcesses) {
+            System.out.println("System is unsafe");
+        } else {
+            System.out.println("Following is the SAFE Sequence");
+            for (int i = 0; i < s.numberOfProcesses; i++) {
+                System.out.print("P" + safeSequence[i]);
+                if (i != s.numberOfProcesses - 1) {
+                    System.out.print(" -> ");
+                }
+            }
+        }
+        return false;
+    }
+}
+
 public class BankerAlgorithm {
 
     /**
@@ -155,7 +230,7 @@ public class BankerAlgorithm {
 //        }
 //    }
     public static void main(String[] args) {
-        Start s = new Start();
+        Start1 s = new Start1();
         s.initializeAllocation();
         s.initializeMax();
 //        System.out.println("Need : ");
