@@ -11,7 +11,7 @@ class Start1 {
 
     public final int nor = 3;
     private int[] resources;
-    public int numberOfProcesses;
+    private int numberOfProcesses;
     private int[] available;
     private int[] numberOfInstances;
     private int[][] need;
@@ -143,52 +143,32 @@ class Start1 {
         }
         return this.need;
     }
-}
-
-class Banker1 {
-
-    private int[] work;
-    private boolean[] finish;
-    private Start1 s;
-    private int[] available;
-    private int[][] allocation;
-    private int safeSequence[];
-
-    Banker1() {
-        s = new Start1();
-        s.initializeAllocation();
-        s.initializeMax();
-        allocation = s.getAllocation();
-        safeSequence = new int[s.numberOfProcesses];
-        available = s.getAvailable();
-        work = new int[s.nor];
-        finish = new boolean[s.numberOfProcesses];
-        for (int i = 0; i < s.nor; i++) {
-            work[i] = available[i];
-        }
-        for (int i = 0; i < s.numberOfProcesses; i++) {
-            finish[i] = false;
-        }
-    }
 
     public boolean isSafe() {
-        int count = 0;
-        //visited array to find the already allocated process 
-        while (count < s.numberOfProcesses) {
-            boolean flag = false;
-            for (int i = 0; i < s.numberOfProcesses; i++) {
-                if (finish[i] == false) {
-                    for (int j = 0; j < s.nor; j++) {
-                        if (s.getNeed()[i][j] > work[j]) {
-                            break;
+        boolean flag = false;
+        boolean visited[] = new boolean[this.numberOfProcesses];
+        for (int i = 0; i < numberOfProcesses; i++) {
+            visited[i] = false;
+        }
+        int counter;
+        int k = 0;
+        int[] sequence = new int[this.numberOfProcesses];
+        while (k < numberOfProcesses) {
+            flag = false;
+            for (int i = 0; i < this.numberOfProcesses; i++) {
+                counter = 0;
+                if (!visited[i]) {
+                    for (int j = 0; j < this.nor; j++) {
+                        if (need[i][j] < available[j]) {
+                            counter++;
                         }
-                        if (j == s.nor) {
-                            safeSequence[count++] = i;
-                            finish[i] = true;
-                            flag = true;
-                            for (int k = 0; k < s.nor; k++) {
-                                work[k] += allocation[i][k];
-                            }
+                    }
+                    if (counter == 3) {
+                        flag = true;
+                        visited[i] = true;
+                        sequence[k++] = i;
+                        for (int j = 0; j < nor; j++) {
+                            available[j] += allocation[i][j];
                         }
                     }
                 }
@@ -197,18 +177,19 @@ class Banker1 {
                 break;
             }
         }
-        if (count < s.numberOfProcesses) {
-            System.out.println("System is unsafe");
+        if (k < numberOfProcesses) {
+            System.out.println("System is unsafe!");
+            return false;
         } else {
-            System.out.println("Following is the SAFE Sequence");
-            for (int i = 0; i < s.numberOfProcesses; i++) {
-                System.out.print("P" + safeSequence[i]);
-                if (i != s.numberOfProcesses - 1) {
-                    System.out.print(" -> ");
+            System.out.println("System is safe with sequence");
+            for (int i = 0; i < numberOfProcesses; i++) {
+                System.out.println(" P " + sequence[i]);
+                if (i != numberOfProcesses - 1) {
+                    System.out.println(" -> ");
                 }
             }
+            return true;
         }
-        return false;
     }
 }
 
@@ -217,28 +198,28 @@ public class BankerAlgorithm {
     /**
      * @param args the command line arguments
      */
-//    public static void prnt1d(int []arr){
-//        for (int i = 0; i < arr.length; i++) 
-//            System.out.print(arr[i] + "|");
-//        System.out.print("\n");
-//    }
-//    public static void prnt2d(int [][]arr){
-//        for (int i = 0; i < arr.length; i++) {
-//            for (int j = 0; j < arr[i].length; j++) 
-//                System.out.print(arr[i][j] + "|");
-//            System.out.print("\n");
-//        }
-//    }
+    public static void prnt1d(int []arr){
+        for (int i = 0; i < arr.length; i++) 
+            System.out.print(arr[i] + "|");
+        System.out.print("\n");
+    }
+    public static void prnt2d(int [][]arr){
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[i].length; j++) 
+                System.out.print(arr[i][j] + "|");
+            System.out.print("\n");
+        }
+    }
     public static void main(String[] args) {
         Start1 s = new Start1();
         s.initializeAllocation();
         s.initializeMax();
-//        System.out.println("Need : ");
-//        prnt2d(s.getNeed());
-//        System.out.println("Available : ");
-//        prnt1d(s.getAvailable());
+        System.out.println("Need : ");
+        prnt2d(s.getNeed());
+        System.out.println("Available : ");
+        prnt1d(s.getAvailable());
+        s.isSafe();
         s.checkDeadlock();
-
     }
 
 }
