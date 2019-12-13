@@ -7,14 +7,10 @@ package banker.algorithm;
 
 import java.util.Scanner;
 
-class Resources {
-
-}
-
 class Start {
 
-    private final int nor = 3;
-    private Resources[] resources;
+    public final int nor = 3;
+    private int[] resources;
     private int numberOfProcesses;
     private int[] available;
     private int[] numberOfInstances;
@@ -23,8 +19,8 @@ class Start {
     private int[][] max;
     Scanner sc = new Scanner(System.in);
 
-    Start(){
-        this.numberOfInstances = new int [nor];
+    Start() {
+        this.numberOfInstances = new int[nor];
         System.out.println("Enter number of processes");
         this.numberOfProcesses = sc.nextInt();
         for (int i = 0; i < nor; i++) {
@@ -34,7 +30,7 @@ class Start {
     }
 
     public void initializeAllocation() {
-        this.allocation = new int [this.numberOfProcesses][this.nor];
+        this.allocation = new int[this.numberOfProcesses][this.nor];
         for (int i = 0; i < this.numberOfProcesses; i++) {
             for (int j = 0; j < nor; j++) {
                 System.out.println("Enter the allocations for process " + i + " and resource " + j);
@@ -44,7 +40,7 @@ class Start {
     }
 
     public void initializeMax() {
-        this.max = new int [this.numberOfProcesses][this.nor];
+        this.max = new int[this.numberOfProcesses][this.nor];
         for (int i = 0; i < this.numberOfProcesses; i++) {
             for (int j = 0; j < nor; j++) {
                 System.out.println("Enter the max for process " + i + " and resource " + j);
@@ -54,12 +50,12 @@ class Start {
     }
 
     public int[] getAvailable() {
-        this.available= new int [nor];
+        this.available = new int[nor];
         int sum = 0;
         for (int i = 0; i < nor; i++) {
+            sum = 0;
             for (int j = 0; j < this.numberOfProcesses; j++) {
                 //sum= the sum of the column (resource instances)
-                sum = 0;
                 sum += allocation[j][i];
             }
             /*
@@ -72,7 +68,7 @@ class Start {
     }
 
     public int[][] getNeed() {
-        this.need = new int [this.numberOfProcesses][this.nor];
+        this.need = new int[this.numberOfProcesses][this.nor];
         for (int i = 0; i < this.numberOfProcesses; i++) {
             for (int j = 0; j < nor; j++) {
                 this.need[i][j] = this.max[i][j] - this.allocation[i][j];
