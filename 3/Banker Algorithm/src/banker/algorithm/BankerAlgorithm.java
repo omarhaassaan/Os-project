@@ -29,6 +29,65 @@ class Start {
         }
     }
 
+    public void checkDeadlock() {
+        int finish[], temp, flag = 1, k, c1 = 0;
+
+        int dead[];
+        int safe[];
+        int i, j;
+
+        finish = new int[this.numberOfProcesses];
+        dead = new int[100];
+        safe = new int[100];
+
+        for (i = 0; i < this.numberOfProcesses; i++) {
+            finish[i] = 0;
+        }
+        //find need matrix
+        this.getAvailable();
+        this.getNeed();
+        
+        while (flag == 1) {
+            flag = 0;
+            for (i = 0; i < this.numberOfProcesses; i++) {
+                int c = 0;
+                for (j = 0; j < this.nor; j++) {
+                    if ((finish[i] == 0) && (need[i][j] <= available[j])) {
+                        c++;
+                        if (c == this.nor) {
+                            for (k = 0; k < this.nor; k++) {
+                                available[k] += this.allocation[i][j];
+                                finish[i] = 1;
+                                flag = 1;
+                            }
+                            if (finish[i] == 1) {
+                                i = this.numberOfProcesses;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        j = 0;
+        flag = 0;
+        for (i = 0; i < this.numberOfProcesses; i++) {
+            if (finish[i] == 0) {
+                dead[j] = i;
+                j++;
+                flag = 1;
+            }
+        }
+        if (flag == 1) {
+
+            System.out.println("\n\nSystem is in Deadlock and the Deadlock process are\n");
+            for (i = 0; i < this.numberOfProcesses; i++) {
+                System.out.println("P" + dead[i]);
+            }
+        } else {
+            System.out.println("No deadlock occure");
+        }
+    }
+
     public void initializeAllocation() {
         this.allocation = new int[this.numberOfProcesses][this.nor];
         for (int i = 0; i < this.numberOfProcesses; i++) {
@@ -83,11 +142,27 @@ public class BankerAlgorithm {
     /**
      * @param args the command line arguments
      */
+//    public static void prnt1d(int []arr){
+//        for (int i = 0; i < arr.length; i++) 
+//            System.out.print(arr[i] + "|");
+//        System.out.print("\n");
+//    }
+//    public static void prnt2d(int [][]arr){
+//        for (int i = 0; i < arr.length; i++) {
+//            for (int j = 0; j < arr[i].length; j++) 
+//                System.out.print(arr[i][j] + "|");
+//            System.out.print("\n");
+//        }
+//    }
     public static void main(String[] args) {
         Start s = new Start();
         s.initializeAllocation();
         s.initializeMax();
-        System.out.println(s.getAvailable() + " " + s.getNeed());
+//        System.out.println("Need : ");
+//        prnt2d(s.getNeed());
+//        System.out.println("Available : ");
+//        prnt1d(s.getAvailable());
+        s.checkDeadlock();
 
     }
 
