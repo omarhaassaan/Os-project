@@ -21,6 +21,7 @@ class Start {
     private int[][] need;
     private int[][] allocation;
     private int[][] max;
+    public boolean deadlock;
     Scanner sc = new Scanner(System.in);
 
     Start() {
@@ -33,9 +34,9 @@ class Start {
         }
     }
 
-    public boolean checkDeadlock() {
+    public int[] checkDeadlock() {
         int finish[], temp, flag = 1, k, c1 = 0;
-        int[] available = this.available;
+        int nothing[] = {};
         int dead[];
         int safe[];
         int i, j;
@@ -82,15 +83,40 @@ class Start {
             }
         }
         if (flag == 1) {
-
+            deadlock = true;
             System.out.println("\n\nSystem is in Deadlock and the Deadlock process are\n");
             for (i = 0; i < this.numberOfProcesses; i++) {
                 System.out.println("P" + dead[i]);
             }
-            return true;
+            return dead;
         } else {
+            deadlock = false;
             System.out.println("No deadlock occure");
-            return false;
+            return nothing;
+        }
+    }
+
+    public void recoverDeadlock(int[] deadlockedProcesses) {
+        int p;
+        int i = 0;
+        while (deadlock) {
+            if (deadlockedProcesses[i] == 0 && i > 0) {
+                break;
+            }
+            p = deadlockedProcesses[i];
+            for (int j = 0; j < nor; j++) {
+                allocation[p][j] = 0;
+            }
+            getAvailable();
+            getNeed();
+            if (isSafe()) {
+                System.out.println("Deadlock recovered");
+                deadlock = false;
+                break;
+            } else {
+                checkDeadlock();
+            }
+            i++;
         }
     }
 
@@ -151,7 +177,6 @@ class Start {
     }
 
     public boolean isSafe() {
-        int[] available = this.available;
         boolean flag = false;
         boolean visited[] = new boolean[this.numberOfProcesses];
         for (int i = 0; i < numberOfProcesses; i++) {
@@ -166,7 +191,7 @@ class Start {
                 counter = 0;
                 if (!visited[i]) {
                     for (int j = 0; j < this.nor; j++) {
-                        if (need[i][j] <= available[j]) {
+                        if (need[i][j] < available[j]) {
                             counter++;
                         }
                     }
@@ -198,9 +223,6 @@ class Start {
             return true;
         }
     }
-    public void recoverDeadlock(){
-        //nktb hna kosom el recovery
-    }
 }
 
 public class Deadlock {
@@ -226,6 +248,7 @@ public class Deadlock {
 
     public static void main(String[] args) {
         Start s = new Start();
+        int[] deadlockedProcesses;
         s.initializeAllocation();
         s.initializeMax();
         System.out.println("Need : ");
@@ -233,8 +256,8 @@ public class Deadlock {
         System.out.println("Available : ");
         prnt1d(s.getAvailable());
         if (!s.isSafe()) {
-            if(s.checkDeadlock())
-                s.recoverDeadlock();
+            deadlockedProcesses = s.checkDeadlock();
+            s.recoverDeadlock(deadlockedProcesses);
         }
     }
 }
