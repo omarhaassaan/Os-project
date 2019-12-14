@@ -197,6 +197,8 @@ class Start {
                 counter = 0;
                 if (!visited[i]) {
                     for (int j = 0; j < this.nor; j++) {
+                        if (need[i][j]==0 && max[i][j]==0 && allocation[i][j]==0)
+                            break;
                         if (need[i][j] <= available[j]) {
                             counter++;
                         }
