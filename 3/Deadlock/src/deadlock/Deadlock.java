@@ -35,6 +35,7 @@ class Start {
     }
 
     public int[] checkDeadlock() {
+        int[] available = this.available;
         int finish[], temp, flag = 1, k, c1 = 0;
         int nothing[] = {};
         int dead[];
@@ -86,7 +87,9 @@ class Start {
             deadlock = true;
             System.out.println("\n\nSystem is in Deadlock and the Deadlock process are\n");
             for (i = 0; i < this.numberOfProcesses; i++) {
-                System.out.println("P" + dead[i]);
+                if (!(i > 0 && dead[i] == 0)) {
+                    System.out.println("P" + dead[i]);
+                }
             }
             return dead;
         } else {
@@ -177,6 +180,7 @@ class Start {
     }
 
     public boolean isSafe() {
+        int[] available = this.available;
         boolean flag = false;
         boolean visited[] = new boolean[this.numberOfProcesses];
         for (int i = 0; i < numberOfProcesses; i++) {
@@ -191,7 +195,7 @@ class Start {
                 counter = 0;
                 if (!visited[i]) {
                     for (int j = 0; j < this.nor; j++) {
-                        if (need[i][j] < available[j]) {
+                        if (need[i][j] <= available[j]) {
                             counter++;
                         }
                     }
