@@ -111,6 +111,7 @@ class Start {
                 allocation[p][j] = 0;
                 max[p][j] = 0;
             }
+            deadlockedProcesses[i] = 0;
             getAvailable();
             getNeed();
             if (isSafe()) {
@@ -238,8 +239,9 @@ class Start {
             if (allocation[p][i] == 0 && max[p][i] == 0) {
                 counter++;
             }
-            if (counter == 3)
+            if (counter == 3) {
                 return false;
+            }
         }
         return true;
     }
