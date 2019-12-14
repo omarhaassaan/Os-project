@@ -109,6 +109,7 @@ class Start {
             p = deadlockedProcesses[i];
             for (int j = 0; j < nor; j++) {
                 allocation[p][j] = 0;
+                max[p][j] = 0;
             }
             getAvailable();
             getNeed();
@@ -219,6 +220,9 @@ class Start {
         } else {
             System.out.println("System is safe with sequence");
             for (int i = 0; i < numberOfProcesses; i++) {
+                if (!isHere(i)) {
+                    continue;
+                }
                 System.out.println(" P " + sequence[i]);
                 if (i != numberOfProcesses - 1) {
                     System.out.println(" -> ");
@@ -226,6 +230,18 @@ class Start {
             }
             return true;
         }
+    }
+
+    public boolean isHere(int p) {
+        int counter = 0;
+        for (int i = 0; i < nor; i++) {
+            if (allocation[p][i] == 0 && max[p][i] == 0) {
+                counter++;
+            }
+            if (counter == 3)
+                return false;
+        }
+        return true;
     }
 }
 
