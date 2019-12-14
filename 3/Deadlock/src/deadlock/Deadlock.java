@@ -9,7 +9,6 @@ package deadlock;
  *
  * @author Lenovo
  */
-
 import java.util.Scanner;
 
 class Start {
@@ -34,9 +33,9 @@ class Start {
         }
     }
 
-    public void checkDeadlock() {
+    public boolean checkDeadlock() {
         int finish[], temp, flag = 1, k, c1 = 0;
-
+        int[] available = this.available;
         int dead[];
         int safe[];
         int i, j;
@@ -88,8 +87,10 @@ class Start {
             for (i = 0; i < this.numberOfProcesses; i++) {
                 System.out.println("P" + dead[i]);
             }
+            return true;
         } else {
             System.out.println("No deadlock occure");
+            return false;
         }
     }
 
@@ -150,6 +151,7 @@ class Start {
     }
 
     public boolean isSafe() {
+        int[] available = this.available;
         boolean flag = false;
         boolean visited[] = new boolean[this.numberOfProcesses];
         for (int i = 0; i < numberOfProcesses; i++) {
@@ -164,7 +166,7 @@ class Start {
                 counter = 0;
                 if (!visited[i]) {
                     for (int j = 0; j < this.nor; j++) {
-                        if (need[i][j] < available[j]) {
+                        if (need[i][j] <= available[j]) {
                             counter++;
                         }
                     }
@@ -196,6 +198,9 @@ class Start {
             return true;
         }
     }
+    public void recoverDeadlock(){
+        //nktb hna kosom el recovery
+    }
 }
 
 public class Deadlock {
@@ -203,18 +208,22 @@ public class Deadlock {
     /**
      * @param args the command line arguments
      */
-    public static void prnt1d(int[]arr){
-        for (int i = 0; i < arr.length; i++) 
+    public static void prnt1d(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i] + "|");
+        }
         System.out.print("\n");
     }
-    public static void prnt2d(int [][]arr){
+
+    public static void prnt2d(int[][] arr) {
         for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[i].length; j++) 
+            for (int j = 0; j < arr[i].length; j++) {
                 System.out.print(arr[i][j] + "|");
+            }
             System.out.print("\n");
         }
     }
+
     public static void main(String[] args) {
         Start s = new Start();
         s.initializeAllocation();
@@ -223,7 +232,9 @@ public class Deadlock {
         prnt2d(s.getNeed());
         System.out.println("Available : ");
         prnt1d(s.getAvailable());
-        s.isSafe();
-        s.checkDeadlock();
+        if (!s.isSafe()) {
+            if(s.checkDeadlock())
+                s.recoverDeadlock();
+        }
     }
 }
