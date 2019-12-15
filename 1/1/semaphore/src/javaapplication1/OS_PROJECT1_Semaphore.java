@@ -1,105 +1,193 @@
 package javaapplication1;
-import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-  class Count{
-       static int co = 0;
-             }
-class T extends Thread
+class semaphore
 {
-    Semaphore s1 ;
-    String t1;
-    public T(Semaphore s1 , String t1)
+    int permits; //permits is the initial number of permits available
+public semaphore(int permits) {
+          this.permits=permits;
+   }
+public synchronized void Acquire() throws InterruptedException {
+    if(permits > 0)         // Acquires a permit
+           
     {
-        super(t1);
-        this.s1=s1;
-        this.t1=t1;
-        
+                  permits--;
     }
-    @Override
-    public void run()
+    else                      //permit is not available wait
     {
-        
-        if(this.getName().equals("FRIST ONE")|| this.getName().equals("THIRD ONE"))
-        {
-            
-            System.out.println("The Following Thread is waiting for the permit = "+t1);
-        try {
-   
-            s1.acquire();
-            
-            System.out.println("The Following thread got the permit = "+t1);
-            
-            for(int i =0;i<10;i++)
-            {
-                Count.co ++ ;
-                System.out.println(t1 + "=" + Count.co) ;
-                
-            }
-            Thread.sleep(10);
-        }
-        catch (Exception e) {
-       System.out.println("Error");
-        } 
-        System.out.println("The Following thread  released the permit = "+t1);
-        s1.release();
-        }
-        else
-        {
-              if(this.getName().equals("SECOND ONE") || this.getName().equals("FORTH ONE"))
-        {
-            
-            System.out.println("The Following Thread is waiting for the permit = "+t1);
-        try {
-   
-            s1.acquire();
-            
-            System.out.println("The Following thread got the permit = "+t1);
-            
-            for(int i =0;i<10;i++)
-            {
-                Count.co -- ;
-                System.out.println(t1 + "=" + Count.co) ;
-                
-            }
-            Thread.sleep(10);
-        }
-        catch (Exception e) {
-       System.out.println("Error");
-        } 
-        System.out.println("The Following thread  released the permit = "+t1);
-        s1.release();
-        }  
-                }
+                  this.wait();
+                  permits-- ;
     }
     
+}
+public synchronized void Release() 
+{
+           //increases the number of available permits by 1
+           permits++;
+           
+           //If permits are greater than 0 . notify waiting threads
+           if(permits > 0)
+                  this.notify();
+}
 }
 public class OS_PROJECT1_Semaphore {
+    static int Value=0;
     
     public static void main(String[] args) throws InterruptedException {
-         Semaphore s1 = new Semaphore(1);
-        T Frist = new T(s1,"FRIST ONE");
-        T Second = new T(s1,"SECOND ONE");
-        T Third = new T (s1,"THIRD ONE");
-        T Forth = new T (s1,"FORTH ONE");
-        
-        Frist.start();
-
-        Second.start();
-
-        Third.start();
-        Forth.start();
-        
-        Frist.join();
-        
-        Second.join();
-        
-        Third.join();
-        
-        Forth.join();
-        
-        System.out.println("" + Count.co);
-        
+        semaphore semaphore=new semaphore(1);
+           System.out.println("Semaphore with " +semaphore.permits+ " permit has been created");
+           
+           Thread1 thread1 =new Thread1(semaphore);
+           new Thread(thread1,"Thread1").start();
+           
+           Thread2 thread2 =new Thread2(semaphore);
+           new Thread(thread2,"Thread2").start();
+           
+           Thread3 thread3 =new Thread3(semaphore);
+           new Thread(thread3,"Thread3").start();
+           
+           Thread4 thread4 =new Thread4(semaphore);
+           new Thread(thread4,"Thread4").start();
+           
+           
+    }
+}
+    
+    class Thread1 implements Runnable{
+ 
+    semaphore semaphore1;
+    
+    public Thread1(semaphore semaphore1) {
+           this.semaphore1=semaphore1;        
+    }
+    
+    public void run(){
+           System.out.println(Thread.currentThread().getName()+
+                        " is waiting for permit");
+           try {
+                  semaphore1.Acquire();
+                  System.out.println(Thread.currentThread().getName()+
+                               " has got permit");
+           
+                  for(int i=0;i<5;i++){
+                        Thread.sleep(1000);
+                        System.out.println(Thread.currentThread().getName()+
+                                      " > "+OS_PROJECT1_Semaphore.Value++);
+                  }
+                  
+           } catch (InterruptedException e) {
+                  e.printStackTrace();
+           }
+           
+           System.out.println(Thread.currentThread().getName()+
+                        " has released permit");
+           semaphore1.Release();
+    
     }
     
 }
+ class Thread2 implements Runnable{
+ 
+    semaphore semaphore1;
+    public Thread2(semaphore semaphore1){
+           this.semaphore1=semaphore1;
+    }
+    
+    public void run(){
+           System.out.println(Thread.currentThread().getName()+
+                        " is waiting for permit");
+           
+           try {
+                  semaphore1.Acquire();
+                  System.out.println(Thread.currentThread().getName()+
+                               " has got permit");
+           
+                  for(int i=0;i<5;i++){          
+                        Thread.sleep(1000);
+                        System.out.println(Thread.currentThread().getName()+
+                                      " >"+OS_PROJECT1_Semaphore.Value--);
+                  }
+                  
+           } catch (InterruptedException e) {
+                  e.printStackTrace();
+           }
+           
+           
+           System.out.println(Thread.currentThread().getName()+
+                        " has released permit");
+           semaphore1.Release();
+           
+           
+    }
+ }
+    
+
+ class Thread3 implements Runnable{
+ 
+    semaphore semaphore1;
+    
+    public Thread3(semaphore semaphore1) {
+           this.semaphore1=semaphore1;        
+    }
+    
+    public void run(){
+           System.out.println(Thread.currentThread().getName()+
+                        " is waiting for permit");
+           try {
+                  semaphore1.Acquire();
+                  System.out.println(Thread.currentThread().getName()+
+                               " has got permit");
+           
+                  for(int i=0;i<5;i++){
+                        Thread.sleep(1000);
+                        System.out.println(Thread.currentThread().getName()+
+                                      " > "+OS_PROJECT1_Semaphore.Value++);
+                  }
+                  
+           } catch (InterruptedException e) {
+                  e.printStackTrace();
+           }
+           
+           System.out.println(Thread.currentThread().getName()+
+                        " has released permit");
+           semaphore1.Release();
+    
+    }
+ }
+ 
+        
+        
+        
+    
+    
+class Thread4 implements Runnable{
+ 
+    semaphore semaphore1;
+    
+    public Thread4(semaphore semaphore1) {
+           this.semaphore1=semaphore1;        
+    }
+    
+    public void run(){
+           System.out.println(Thread.currentThread().getName()+
+                        " is waiting for permit");
+           try {
+                  semaphore1.Acquire();
+                  System.out.println(Thread.currentThread().getName()+
+                               " has got permit");
+           
+                  for(int i=0;i<5;i++){
+                        Thread.sleep(1000);
+                        System.out.println(Thread.currentThread().getName()+
+                                      " > "+OS_PROJECT1_Semaphore.Value--);
+                  }
+                  
+           } catch (InterruptedException e) {
+                  e.printStackTrace();
+           }
+           
+           System.out.println(Thread.currentThread().getName()+
+                        " has released permit");
+           semaphore1.Release();
+    
+    }
+}
+
