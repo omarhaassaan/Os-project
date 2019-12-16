@@ -112,6 +112,7 @@ class Start {
                 max[p][j] = 0;
                 available[j]+=allocation[p][j];
             }
+            System.out.println("Process " + p + " aborted");
             deadlockedProcesses[i] = 0;
             getAvailable();
             getNeed();
