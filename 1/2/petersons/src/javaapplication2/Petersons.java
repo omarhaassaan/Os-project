@@ -23,7 +23,7 @@ public class Petersons{
                         //
                         flag[i]= false;
                         //remainder section
-                    }while(counter<10); // 10 is our limit to remove infinite looping
+                    }while(counter<5); // 10 is our limit to remove infinite looping
                 }
                 catch(Exception ex){
                     System.out.println("something is wrong");
@@ -46,7 +46,7 @@ public class Petersons{
                         System.out.println("Critical variable equals ="+Critical_variable);
                         flag[j]= false;
                         //remainder section
-                    }while(counter<10); 
+                    }while(counter<5); 
                 }
                 catch(Exception ex){
                     ex.printStackTrace();

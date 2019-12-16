@@ -5,12 +5,8 @@ import java.util.Queue;
 
 class semaphore {
 
-    int permits; //permits is the initial number of permits available
+    int permits = 1; //permits is the initial number of permits available
     protected Queue<Thread> q = new LinkedList<Thread>();
-
-    public semaphore(int permits) {
-        this.permits = permits;
-    }
 
     public synchronized void Acquire() throws InterruptedException {
         permits--;
@@ -36,10 +32,9 @@ class semaphore {
 }
 
 class Thread1 implements Runnable {
-    
-    static semaphore s= new semaphore (1);
-    public Thread1() {
-    }
+
+    static semaphore s = new semaphore();
+    static int value = 0;
 
     public void run() {
         System.out.println(Thread.currentThread().getName()
@@ -52,7 +47,7 @@ class Thread1 implements Runnable {
             for (int i = 0; i < 5; i++) {
                 Thread.sleep(1000);
                 System.out.println(Thread.currentThread().getName()
-                        + " > " + OS_PROJECT1_Semaphore.Value++);
+                        + " > " + value++);
             }
 
         } catch (InterruptedException e) {
@@ -67,8 +62,6 @@ class Thread1 implements Runnable {
 
 }
 
-
-
 public class OS_PROJECT1_Semaphore {
 
     static int Value = 0;
@@ -79,7 +72,7 @@ public class OS_PROJECT1_Semaphore {
         Thread1 thread2 = new Thread1();
         Thread1 thread3 = new Thread1();
         Thread1 thread4 = new Thread1();
-       
+
         new Thread(thread1, "Thread1").start();
         new Thread(thread2, "Thread2").start();
         new Thread(thread3, "Thread3").start();
