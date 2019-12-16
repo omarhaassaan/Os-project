@@ -110,6 +110,7 @@ class Start {
             for (int j = 0; j < nor; j++) {
                 allocation[p][j] = 0;
                 max[p][j] = 0;
+                available[j]+=allocation[p][j];
             }
             deadlockedProcesses[i] = 0;
             getAvailable();
